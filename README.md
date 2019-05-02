@@ -42,12 +42,12 @@ mix test
 * Elixir standard library docs: https://hexdocs.pm/elixir/
 * Elixir official website: https://elixir-lang.org/
 
-# Commonly used modules
+### Commonly used modules
 * [Kernel](https://hexdocs.pm/elixir/Kernel.html)
 * [String](https://hexdocs.pm/elixir/String.html)
 * [Enum](https://hexdocs.pm/elixir/Enum.html)
 
-# Less commonly used modules
+### Less commonly used modules
 * [Map](https://hexdocs.pm/elixir/Map.html)
 * [List](https://hexdocs.pm/elixir/List.html)
 * [Keyword](https://hexdocs.pm/elixir/Keyword.html)

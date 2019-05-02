@@ -5,7 +5,7 @@ The goal with the workshop is to get a brief introduction to functional programm
 * [Module with the skeleton of the string calculator function to be implemented](lib/string_calculator.ex)
 * [Test cases](test/string_calculator_test.exs)
 
-To avoid noise from test cases for steps that fail because you didn't reach those steps yet, update the function (`StringCalculator.step/0`)[lib/string_calculator.ex#L2] to return the number of the exercise/step you're at.
+To avoid noise from test cases for steps that fail because you didn't reach those steps yet, update the function [`StringCalculator.step/0`](lib/string_calculator.ex#L2) to return the number of the exercise/step you're at.
 
 [Slides](https://haakonst.github.io/elixir-fp-intro/presentation.html) for this workshop.
 

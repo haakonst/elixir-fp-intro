@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Introduction to functional programming with Elixir</title>
+<meta charset="utf-8">
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+  @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+  @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+  body { font-family: 'Droid Serif'; }
+  h1, h2, h3 {
+    font-family: 'Yanone Kaffeesatz';
+    font-weight: normal;
+  }
+  .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+  .fontsize85, .fontsize85 .remark-code { font-size: 85% }
+  .fontsize90, .fontsize90 .remark-code { font-size: 90% }
+  .fontsize95, .fontsize95 .remark-code { font-size: 95% }
+  .fontsize100, .fontsize100 .remark-code { font-size: 100% }
+  .fontsize120, .fontsize120 .remark-code { font-size: 120% }
+  .fontsize200, .fontsize200 .remark-code { font-size: 120% }
+</style>
+</head>
+<body>
+<textarea id="source">
+class: center, middle
+
+# Introduction to functional programming with Elixir
+
+---
+# Goal
+
+To give an introduction to a few functional programming concepts using Elixir as programming language
+
+---
+class: fontsize120
+
+# Elixir
+
+Key language features
+* Python-like syntax
+* Functional programming
+  * First class and higher-order functions
+  * Everything is an expression
+  * Few side-effects
+* Dynamic typing
+* Pattern matching
+* Meta programming
+
+Built on top of Erlang
+* Compiles to Erlang byte-code (BEAM) and runs on the Erlang virtual machine
+* Can use the Erlang standard library as well as third-party Erlang libraries/packages
+
+Erlang
+* General-purpose functional programming language
+* Developed by Ericsson
+* Focus on: Concurrency, fault tolerance, high availability, hot swapping, real-time computing
+
+---
+# Example
+
+```elixir
+defmodule Hello do
+  def hello() do
+    IO.puts("Hello World!")
+  end
+end
+
+Hello.hello()
+```
+
+---
+class: fontsize100
+
+# Running an Elixir program
+
+REPL
+```sh
+iex
+```
+
+Running a script file
+```sh
+elixir program.exs
+```
+
+Running an application
+```sh
+mix run
+```
+
+Running a Phoenix application
+```sh
+mix phx.server
+```
+
+Connect to a running application
+```sh
+iex -S mix
+```
+
+Running in production is a different story...
+
+---
+# Creating a mix project
+
+To create a mix project use `mix new` and give the application name as argument
+```sh
+mix new elixir_fp_intro
+```
+This will create a directory called `elixir_fp_intro` containing various files needed to build the
+project
+
+For more refined control, give additional arguments to specify the directory name, application name
+and name of the base module of the application separately
+```sh
+mix new elixir-fp-intro --app elixir_fp_intro --module ElixirFpIntro
+```
+
+Running the application
+```sh
+mix run
+```
+
+Running unit tests
+```sh
+mix test
+```
+
+---
+# Basic data types
+```elixir
+14                               # integer
+0b1001                           # binary integer
+0o77                             # octal integer
+0xFF                             # hexadecimal integer
+12.2                             # float
+true                             # boolean
+false
+"test"                           # string / binary
+:test                            # atom / symbol
+[1, 2, 3]                        # list
+{1, 2, 3}                        # tuple
+%{name: "John Smith", age: 48}   # map / key-value store
+```
+
+---
+# Basic operators
+```elixir
+> 2 + 3                          # arithmetic operators
+5
+
+> 2 * 12
+24
+
+> 25 / 2
+12.5
+
+> div(25, 2)                     # integer division and remainder
+12
+
+> rem(25, 2)
+1
+
+> "Hello " <> "John Smith"       # string concatenation
+"Hello John Smith"
+
+> "2 + 3 = #{2 + 3}"             # string interpolation
+"2 + 3 = 5"
+```
+
+---
+# Standard library modules and functions
+
+Modules are collections of functions. Elixir provides several modules in its standard library.
+Here are some of the more commonly used:
+* [Kernel](https://hexdocs.pm/elixir/Kernel.html)
+* [String](https://hexdocs.pm/elixir/String.html)
+* [Enum](https://hexdocs.pm/elixir/Enum.html)
+* [Map](https://hexdocs.pm/elixir/Map.html)
+
+Some not so commonly used modules:
+* [List](https://hexdocs.pm/elixir/List.html)
+* [Keyword](https://hexdocs.pm/elixir/Keyword.html)
+* [Integer](https://hexdocs.pm/elixir/Integer.html)
+* [Regex](https://hexdocs.pm/elixir/Regex.html)
+
+As we will see when invoking a function in another module (than the current one) the function name must be
+qualified with the module name: `String.length("test")`. The only exception to this is the `Kernel` module,
+or if you mention the module using an [`import`](https://elixir-lang.org/getting-started/alias-require-and-import.html)
+or similar directive in the beginning of your own module. More on defining your own modules later.
+
+---
+
+# Kernel
+
+The [Kernel module](https://hexdocs.pm/elixir/Kernel.html) provides the basic language primitives and functions.
+As an exception functions in this module can be used unqualified and straight away, without any `import`
+or similar statements in the source file header. Example functions:
+
+```elixir
+> is_binary("test")    # string check
+true
+
+> to_string(123)       # convert to string
+"123"
+
+> elem({1, 2, 3}, 1)   # tuple access - access nth element of a tuple
+2
+```
+
+---
+
+# Strings
+
+The [String module](https://hexdocs.pm/elixir/String.html) module provides functions for string manipulation:
+
+```elixir
+> String.length("test")
+4
+
+> String.replace("abcd", "bc", "")
+"ad"
+
+> String.downcase("Test")
+"test"
+
+> String.split("a,b", ",")
+["a", "b"]
+```
+
+---
+
+# Integers
+
+The [Integer module](https://hexdocs.pm/elixir/Integer.html) has for functions dealing with integers, for example parsing:
+
+```elixir
+> Integer.parse("123 apples")
+{123, " apples"}
+```
+
+---
+class: fontsize90
+
+# Tuples
+
+Tuples are used when the number of elements is constant. Tuples can contain a mix of data types, including other tuples and structured data types:
+```elixir
+> tuple = {2, "abcd"}
+{2, "abcd"}
+
+> complex_tuple = {:ok, {1, 2, 3}, ["Test 1", "Test 2"]}
+```
+
+Elements can be accessed by index:
+```elixir
+> elem(tuple, 0)
+2
+```
+
+However, usually you'll use pattern matching to access elements:
+```elixir
+> {a, b} = tuple
+```
+
+Tupples are often used to return status values along with return values from functions:
+```elixir
+> Map.fetch(%{a: 1, b: 2}, :a)
+{:ok, 1}
+
+> Map.fetch(%{a: 1, b: 2}, :c)
+:error
+```
+
+---
+class: fontsize100
+
+# Lists
+
+Lists are used when the number of elments may vary:
+```elixir
+> list = [4, 2, 7, "abcd"]
+```
+
+Lists are most often manipultated using the functions in the `Enum` module,
+for example to access elements by index:
+
+```elixir
+> Enum.at(list, 2) # list[2] won't work
+7
+```
+
+However, there are some special functions for lists:
+
+```elixir
+> hd(list) # First element of list
+4
+
+> tl(list) # All but the first element of list (the tail)
+[2, 7, "abcd"]
+
+> [1, 2] ++ [3, 4] # List concatenation
+[1, 2, 3, 4]
+```
+
+The [List module](https://hexdocs.pm/elixir/List.html) also has some functions that are special to lists:
+
+```elixir
+> List.flatten([1, 2, [3, 4], 5, [8, 9]]) # Flatten a list of lists
+[1, 2, 3, 4, 5, 8, 9]
+```
+
+---
+class: fontsize90
+
+# Keyword lists
+
+Special instance of list consisting of only two-element tuples (pairs). The first element of each tuple must be an atom:
+
+```elixir
+> kw = [{:name, "John Smith"}, {:age, 12}]
+```
+
+Such lists have an alternative special syntax:
+
+```elixir
+> kw = [name: "John Smith", age: 12]
+```
+
+There's also a special syntax to look up a value with a specific key in a keyword list:
+
+```elixir
+> kw[:age]
+12
+```
+
+Keyword lists are typically used to pass "options" to functions - an optional parameter
+with a list of values modifying the behavior of the function:
+
+```elixir
+> Regex.run(~r/^(\d+), *(\d+)$/, "34, 2", capture: :all_but_first)
+
+> Regex.run(~r/^(\d+), *(\d+)$/, "34, 2", [capture: :all_but_first])    # The same
+
+> Regex.run(~r/^(\d+), *(\d+)$/, "34, 2", [{:capture, :all_but_first}]) # This also
+```
+
+[Keyword module](https://hexdocs.pm/elixir/Keyword.html)
+
+---
+class: fontsize85
+
+# Maps
+
+Map is Elixir's data type for key-value dictionaries. A map can be viewed as an unordered collection of pairs where the first element (the key) is unique among all pairs in the map:
+
+```elixir
+> map = %{"Sam" => "Smith", 0 => 1, :list => [1, 2, 3]}
+```
+
+To look up a value in the dictionary you can use the same syntax as for keyword lists:
+
+```elixir
+> map["Sam"]
+"Smith"
+> map[0]
+1
+```
+
+Any kind of data type can be used as a key, even another map. Although in practice most often strings or atoms are used as keys:
+
+```elixir
+> login_params = %{"username" => "", "password" => "123123"}
+```
+
+If for some reason a key is repeated, it's the last pair with the key that counts:
+
+```elixir
+> login_params = %{"username" => "", "password" => "123123", "password" => "99999"}
+%{"password" => "99999", "username" => ""}
+```
+
+For maps with only atoms as keys a more compact syntax is supported. The following expressions are equivalent:
+
+```elixir
+> %{:first_name => "Bob", :last_name => "Hansen", :age => 15}
+> %{first_name: "Bob", last_name: "Hansen", age: 15}
+```
+
+The [Map module](https://hexdocs.pm/elixir/Map.html) has functions `Map.get/3`, `Map.put/3`, `Map.delete/2` etc. to do operations on maps.
+
+---
+
+# Dynamic typing
+
+Elixir uses dynamic typing for most data types, which means that most type errors aren't caught until run-time. For example, this function
+call is quite obviously erroneous because the function `Map.get/3` works on maps not lists. However, the error will not be caught until
+the program is executed:
+
+```elixir
+> Map.get([], :age)
+```
+
+However, the struct data type attempts to some extent to compensate for this.
+
+---
+
+# Structs
+
+Struct is a record type which provide compile-time guarantee that only the fields (and all of them) defined in the struct is allowed to exist:
+```elixir
+defmodule Person do
+  defstruct [:first_name, :last_name, :age]
+end
+```
+
+Structs are created, updated and accessed using special syntax:
+```elixir
+> person = %Person{first_name: "Sam", last_name: "Smith", age: 12}
+```
+
+If the keys/fields are left out they will be initialized with `nil` values.
+
+To access a field:
+```elixir
+> person.first_name
+"Sam"
+```
+
+To update a field:
+```elixir
+> %{person | age: 13}
+%Person{age: 13, first_name: "Sam", last_name: "Smith"}
+```
+
+---
+class: fontsize95
+
+# Structs
+
+Attempting to access a non-existent field will cause an error:
+```elixir
+> person.name
+** (KeyError) key :name not found in: %Person{age: 12, first_name: "Sam", last_name: "Smith"}
+```
+
+Note that the above only causes a runtime error. The following will cause compile errors though:
+```elixir
+> %Person{name: name} = person
+** (CompileError) iex:5: unknown key :name for struct Person
+```
+
+```elixir
+> %{person | gender: :male}
+** (KeyError) key :gender not found in: %Person{age: 12, first_name: "Sam", last_name: "Smith"}
+    (stdlib) :maps.update(:gender, :male, %Person{age: 12, first_name: "Sam", last_name: "Smith"})
+    (stdlib) erl_eval.erl:255: anonymous fn/2 in :erl_eval.expr/5
+    (stdlib) lists.erl:1263: :lists.foldl/3
+```
+
+Note:
+* Structs must be defined in their own module
+* Structs are implemented as maps underneath
+* The map access syntax don't work though: `person[:first_name]`
+* Use `person.first_name` instead
+* Since structs are maps the functions in the `Map` module can be used to work with structs but becareful as this will bypass compiler checks
+
+---
+class: fontsize85
+
+# Enumerables
+
+Enumerables are data types whose values are collections that can be listed in some way. For example lists, maps and sequences.
+The [Enum module](https://hexdocs.pm/elixir/Enum.html) contains functions useful for wokring with such data types.
+These functions usually take another function as parameter, specified by the programmer, which will perform some operation on
+each element in the enumerable.
+
+Consider this list:
+
+```elixir
+> list = [3, 2, -7, 10]
+```
+
+Repeated function application on the elements, mapping from one value to another:
+```elixir
+> Enum.map(list, fn n -> 2 * n end)
+[6, 4, -14, 20]
+```
+
+Keep only elements satisfying some condition:
+```elixir
+> Enum.filter(list, fn n -> n >= 0 end)
+[3, 2, 10]
+```
+
+Remove elements satisfying some condition:
+```elixir
+> Enum.reject(list, fn n -> n < 0 end)
+[3, 2, 10]
+```
+
+Group elements matching some criteria:
+```elixir
+> Enum.group_by(list, fn n -> if n < 0 do :negative else :nonnegative end end)
+%{negative: [-7], nonnegative: [3, 2, 10]}
+```
+
+Reduce list to a single value:
+```elixir
+> Enum.reduce(list, 0, fn n, accumulator -> accumulator + n end)
+8
+```
+
+---
+class: fontsize100
+
+# Pattern matching
+
+Variable assignment:
+```elixir
+> a = 50
+```
+
+However, this is actually a simple example of a pattern match. The equal sign is not really a pure assignment operator but a pattern matching operator. When it's used Elixir will try to match the left hand part with the value computed on the right, and assign values to the variables on the left hand side accordingly. If it's not possible to match, it's an error.
+
+```elixir
+> {int, ""} = Integer.parse("123")     # int is assigned 123
+> {int, unit} = Integer.parse("123cm") # int is assigned 123 and unit is assigned "cm"
+```
+
+If it's not possible to match, it's an error.
+```elixir
+> {int, ""} = Integer.parse("123cm")
+** (MatchError) no match of right hand side value: {123, "cm"}
+```
+
+---
+class: fontsize100
+
+# More complex pattern matches
+
+Matching the contents of a map:
+```elixir
+> person = %{first_name: "Bob", last_name: "Hansen", age: 15}
+> %{first_name: first_name, age: age} = person
+> first_name
+"Bob"
+> age
+15
+```
+
+Matching the head and tail of a list:
+```elixir
+> cars = [:volvo, :vw, :bmw]
+> [preferred_car | rest] = cars
+> preferred_car
+:volvo
+```
+
+You can also match nested data structures:
+```elixir
+> person = %{first_name: "Bob", last_name: "Hansen", age: 15, cars: [:volvo, :vw, :bmw]}
+> %{cars: [preferred_car | rest]} = person
+> preferred_car
+:volvo
+```
+
+If you don't care about some parts of a match, use the underscore throw-away variable:
+```elixir
+> %{cars: [preferred_car | _]} = person
+```
+
+---
+
+# Flow control
+
+## `case` - multiple pattern matches until one succeeds
+
+Returns an expression associated with the first pattern that matches. If no pattern matches, it's an error. An underscore can be used to match any value:
+
+```
+case Map.fetch(%{a: 1, b: 2}, :a) do
+  {:ok, result} -> result
+  :error -> nil
+  _ -> nil
+end
+```
+
+---
+
+## `if`
+
+An `if` statement will return a value. Never do assigments inside an `if` statement except for variables that a local to the block inside the `if` statement. Use tuples, for example, if it's necessary to return multiple values:
+
+```elixir
+{sign, abs_value} =
+  if integer < 0 do
+    {:-, -integer}
+  else
+    {:+, integer}
+  end
+```
+
+---
+
+## `cond`
+
+A `cond` is similar to a multi-branch `if-else` statement:
+
+```elixir
+cond do
+  integer < 0 -> :negative
+  integer == 0 -> :zero
+  true -> :positive
+end
+```
+
+---
+
+# Modules and functions
+
+## Module definition
+
+A module is group of functions. Conventionally, modules are named using Pascal case (`ElixirFpIntro`) and each module is placed in its own file named using snake case (`elixir_fp_intro.ex`). 
+
+```elixir
+defmodule ElixirFpIntro do
+
+  ...
+
+end
+```
+
+---
+
+## Function definition
+
+Functions, variables and mostly everything else are also named using snake case (`search_and_sort`):
+Named functions must defined within a module:
+
+```elixir
+defmodule ElixirFpIntro do
+  ...
+
+  def search_and_sort(last_name, sort_fn \\ nil, data \\ @people) do
+    sort_fn = sort_fn || get_sort_fn(:first_name)
+
+    data
+    |> Enum.filter(fn person -> match?(%{last_name: ^last_name}, person) end)
+    |> Enum.sort(sort_fn)
+    |> Enum.map(fn %{first_name: first_name, last_name: last_name} ->
+      "#{first_name} #{last_name}"
+    end)
+  end
+
+  ...
+end
+```
+
+---
+class: fontsize90
+
+## Full example
+
+```elixir
+defmodule ElixirFpIntro do
+  # Constants start with @ and are always local to the module
+  @steve %{first_name: "Steve", last_name: "Jones", age: 43}
+  @people [
+    @steve,
+    %{first_name: "Bob", last_name: "Hansen", age: 15},
+    %{first_name: "Tom", last_name: "Smith", age: 37},
+    %{first_name: "Alice", last_name: "Johnson", age: 25},
+    %{first_name: "Peter", last_name: "Smith", age: 71},
+    %{first_name: "Bob", last_name: "Smith", age: 52}
+  ]
+
+  def hello() do
+    :world
+  end
+
+  def get_steves_first_name() do
+    @steve[:first_name]
+  end
+
+  def get_sort_fn(:first_name) do
+    fn %{first_name: first_name1}, %{first_name: first_name2} -> first_name1 < first_name2 end
+  end
+
+  def get_sort_fn(:age) do
+    fn %{age: age1}, %{age: age2} -> age1 < age2 end
+  end
+
+  def search_and_sort(last_name, sort_fn \\ nil, data \\ @people) do
+    sort_fn = sort_fn || get_sort_fn(:first_name)
+
+    data
+    |> Enum.filter(fn person -> match?(%{last_name: ^last_name}, person) end)
+    |> Enum.sort(sort_fn)
+    |> Enum.map(fn %{first_name: first_name, last_name: last_name} ->
+      "#{first_name} #{last_name}"
+    end)
+  end
+end
+```
+
+---
+
+## Function invocation
+
+Named functions are called in the usual way:
+
+```elixir
+get_sort_fn(:first_name)
+```
+
+The parentheses around the arguments are actually optional, but the convention is to include them.
+When a function is called from outside its module, it must be prefixed with the module name:
+
+```elixir
+ElixirFpIntro.search_and_sort("Smith")
+```
+
+---
+
+# Functional programming concepts
+
+## Anonymous functions
+
+With named parameters:
+```elixir
+> fn x -> 2 * x end
+```
+
+With positional parameters:
+```elixir
+> &(2 * &1)
+```
+
+Invocation of anonymous functions uses a special syntax (note the `.`):
+
+```elixir
+> fn x -> 2 * x end.(2)
+4
+
+> &(2 * &1).(2)
+4
+```
+
+---
+
+## Function variables
+
+```elixir
+> f = fn x -> 2 * x end
+> f.(5)
+10
+```
+
+```elixir
+> f = &(2 * &1)
+> f.(5)
+10
+```
+
+---
+
+## Function references
+
+Named functions can be referenced like this:
+
+```elixir
+> &ElixirFpIntro.search_and_sort/1
+```
+
+so they for example can be assigned to variables:
+
+```elixir
+> f = &ElixirFpIntro.search_and_sort/1
+```
+
+The number after the slash is the arity - the number of parameters.
+When refering to named functions in this way, they must be invoked like anonymous functions:
+
+```elixir
+> f.("Smith")
+```
+
+or directly:
+
+```elixir
+> (&ElixirFpIntro.search_and_sort/1).("Smith")
+```
+
+---
+
+## Function parameters
+
+Elixir supports higher-order functions, that is functions accepting functions as parameter values or returning a function.
+We've already seen many examples in the `Enum` module. Here's another example:
+
+```elixir
+  def search_and_sort(last_name, sort_fn \\ nil, data \\ @people) do
+    sort_fn = sort_fn || get_sort_fn(:first_name)
+
+    data
+    |> Enum.filter(fn person -> match?(%{last_name: ^last_name}, person) end)
+    |> Enum.sort(sort_fn)
+    |> Enum.map(fn %{first_name: first_name, last_name: last_name} ->
+      "#{first_name} #{last_name}"
+    end)
+  end
+```
+
+This function can be invoked by specifying a custom sort function as a parameter:
+```elixir
+> search_and_sort("Smith", fn %{age: age1}, %{age: age2} -> age1 < age2 end)
+```
+
+---
+
+## Functions returning functions
+
+```elixir
+def get_sort_fn(choice) do
+  case choice do
+    :first_name ->
+      fn %{first_name: first_name1}, %{first_name: first_name2} ->
+        first_name1 < first_name2
+      end
+
+    :age ->
+      fn %{age: age1}, %{age: age2} -> age1 < age2 end
+  end
+end
+```
+
+```elixir
+> sort_fn = get_sort_fn(:age)
+> search_and_sort(last_name, sort_fn, data)
+```
+
+---
+
+## Function composition - pipelines
+
+```elixir
+> f(a) |> g() # Same as g(f(a))
+```
+
+or
+
+```elixir
+> a |> f() |> g()
+```
+
+This means that the return value from calling function `f` is passed as the (first) parameter when calling function `g`.
+If a function has more than one parameter, the parameters must be specified as usual in a list delimited by parentheses
+for each functions call. The second parameter of the function will then appear first in the list. This is an example how
+to calculate the integer number of minutes from a count of seconds
+
+```elixir
+minutes
+|> abs()
+|> div(60)       # div actually takes two arguments - div(dividend, divisor)
+|> to_string()
+|> String.pad_leading(2, "0")     # String.pad_leading takes three arguments
+```
+
+The pipeline syntax is imo easier to read than the traditional syntax:
+
+```elixir
+> String.pad_leading(to_string(div(abs(minutes), 60)), 2, "0")
+```
+
+---
+
+## Few side-effects
+
+* Everything an expression
+* Only local variables: no objects with properties, no global variables or module variables
+* Data flow through function calls
+
+However:
+
+* For IO, side-effects are a necessity. For example, the function `IO.inspect/2` is useful for producing debug output:
+  ```elixir
+  minutes
+  |> abs()
+  |> div(60)
+  |> IO.inspect(label: "Minutes calc") # debug output
+  |> to_string()
+  |> String.pad_leading(2, "0")
+  ```
+
+* ETS (Erlang term store) is a global data store that may be used. (For example to cache data obtained over the network.)
+  ```elixir
+  > :ets.new(:table, [:named_table, read_concurrency: true])
+  > :ets.insert(:table, {:cars, [:volvo, :bmw, :vw]})
+  > :ets.lookup(:table, :cars)
+  [cars: [:volvo, :bmw, :vw]]
+  ```
+
+---
+
+## Immutability
+
+Variables and data structures are immutable, they do not change. If you need to change something, you calculate a new value instead.
+This goes hand-in-hand with the functional programming paradigm, where there are no side-effects, and data flows through function calls as parameters and return values.
+
+For example, the `Map.put/3` function does not change a map itself, but creates a new map where the requested change is reflected:
+```elixir
+> person = %{first_name: "Bob", last_name: "Hansen", age: 15}
+> Map.put(person, :last_name, "Smith")
+%{age: 15, first_name: "Bob", last_name: "Smith"}
+```
+
+However, the value in `person` remains the same:
+```elixir
+> person
+%{age: 15, first_name: "Bob", last_name: "Hansen"}
+```
+
+If we want `person` to reflect the change we must reassign it (or more correctly *rebind* it):
+```elixir
+> person = Map.put(person, :last_name, "Smith")
+```
+
+---
+
+## Immutability
+
+For the same reason, if you want to do two updates, this won't work:
+```elixir
+> person = %{first_name: "Bob", last_name: "Hansen", age: 15}
+> Map.put(person, :last_name, "Smith")
+> Map.put(person, :age, person[:age] + 1)
+```
+
+because both calls to `Map.put/3` work on the same value of `person`. (Parameters are passed by value, not by reference.)
+Instead, the second call must work on the return value of the first call.
+
+```elixir
+> person = Map.put(person, :last_name, "Smith")
+> person = Map.put(person, :age, person[:age] + 1)
+```
+
+This is a common pattern in Elixir, and the pipeline syntax can be utilized to get a bit smoother code:
+
+```elixir
+person =
+  person
+  |> Map.put(:last_name, "Smith")
+  |> Map.put(:age, person[:age] + 1)
+```
+
+---
+
+## Recursion
+
+Elixir has no loop statements. Iteration must be done using recursion, or using higher-order functions from the library, like `Enum.map`.
+In practice the library functions are sufficient for most needs. If you need to use recursion it's for cases where you'd choose recursion
+in any other programming language as well.
+
+Note that there's a `for` construct in Elixir but it's roughly equivalent to calling a combination of functions from the `Enum` module,
+like `Enum.filter/2` and `Enum.map/2`.
+
+---
+
+## Slightly more advanced stuff
+
+### Partial function application
+
+Partial function application means transforming a function by fixing some of the parameters to get a new function with fewer parameters:
+```elixir
+> first_elem = fn tuple -> elem(tuple, 0) end
+> first_elem.({1, 2, 3})
+1
+```
+
+There's no special mechanism for this in Elixir, we just use anonymous functions as shown above. Or like this:
+```elixir
+> (&elem(&1, 0)).({1, 2, 3})
+1
+```
+
+For example to get the first elements of a list of tuples:
+```elixir
+> Enum.map([{1, 2, 5}, {2, 3, 6}, {3, 4, 7}], &elem(&1, 0))
+[1, 2, 3]
+```
+
+---
+class: fontsize100
+
+### Currying
+
+Currying is similar to partial function application but not quite the same.
+Currying means transforming a function of `n` agruments into a sequence of one-argument functions each returning the next function in the sequence,
+such that calling each of them in turn, finally yields the same result as the original function. For example, consider this anonymous function, which
+is just the same as `elem/2` but with reversed arguments:
+
+```elixir
+> elem2 =  fn index, tuple -> elem(tuple, index) end
+```
+
+This can be transformed to the following function which returns another function:
+```elixir
+> el =  fn index -> fn tuple -> elem(tuple, index) end end
+```
+
+This is called a curried function. So `elem2.(index, tuple) == el.(index).(tuple)`, where the second value will be the result of evaluating two functions (excluding the call to native `elem/2`).
+Using this anonymous function opens for an even simpler way to map the tuples from the example above:
+
+```elixir
+> Enum.map([{1, 2, 5}, {2, 3, 6}, {3, 4, 7}], el.(0))
+[1, 2, 3]
+```
+
+However, there's no pre-defined `el` function in Elixir like the curried version above so in practice we don't gain much from this.
+Moreover there's no built-in support to do the currying transformation and functions in Elixir's standard library etc. aren't typically written as curried functions.
+
+Curried functions open for a simpler syntax and there are other times where they might be desired. However partial function application usually covers the need.
+
+---
+class: fontsize100
+
+# Other stuff
+
+## Sigils
+
+Sigils are a mechanism which can be used for representing various concepts in Elixir in a compact way,
+for example strings or lists. Sigils start with `~` followed by a single character and a couple of
+delimiters of your own choice (more or less) enclosing a value: `~s(...)`.
+
+For example they can be used to represent strings (which are normally represented with quotes:
+`"..."`). If a string contains a lot of literal quotes it can more conveniently be represented
+by either of the following sigils:
+
+```elixir
+> ~s(Consider the following words: "apples", "oranges", "potatoes")
+"Consider the following words: \"apples\", \"oranges\", \"potatoes\""
+
+> ~s|Consider the following words: "apples", "oranges", "potatoes"|
+"Consider the following words: \"apples\", \"oranges\", \"potatoes\""
+```
+
+Sigils can also be used to represent word lists (which are normally represented as a list of strings:
+`["...", "...", "..."]`). So a list of words can be written like this:
+```elixir
+> ~w(cat mouse bat)
+["cat", "mouse", "bat"]
+```
+
+---
+
+## Regular expressions
+
+Sigils are also used to represent regular expressions:
+
+```elixir
+> ~r/^(\d+), *(\d+)$/
+```
+
+Check if a regexp matches:
+```elixir
+> Regex.match?(~r/^(\d+), *(\d+)$/, pair_of_numbers)
+```
+
+Check if a regexp matches and if so return a list of captures:
+```elixir
+> Regex.run(~r/^(\d+), *(\d+)$/, pair_of_numbers, capture: :all_but_first)
+```
+
+[Regex module](https://hexdocs.pm/elixir/Regex.html)
+
+---
+class: center, middle
+
+# The end
+
+## Questions?
+</textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();</script>
+</body>
+</html>

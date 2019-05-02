@@ -46,9 +46,9 @@ mix test
 * [Kernel](https://hexdocs.pm/elixir/Kernel.html)
 * [String](https://hexdocs.pm/elixir/String.html)
 * [Enum](https://hexdocs.pm/elixir/Enum.html)
+* [Map](https://hexdocs.pm/elixir/Map.html)
 
 ### Less commonly used modules
-* [Map](https://hexdocs.pm/elixir/Map.html)
 * [List](https://hexdocs.pm/elixir/List.html)
 * [Keyword](https://hexdocs.pm/elixir/Keyword.html)
 * [Integer](https://hexdocs.pm/elixir/Integer.html)

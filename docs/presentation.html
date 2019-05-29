@@ -70,34 +70,41 @@ Hello.hello()
 ```
 
 ---
-class: fontsize100
+class: fontsize90
 
-# Running an Elixir program
+# Running an Elixir program 
 
-REPL
+REPL:
 ```sh
 iex
+iex.bat  # PowerShell
 ```
 
-Running a script file
+Running a script file:
 ```sh
 elixir program.exs
 ```
 
-Running an application
+Running an application:
 ```sh
 mix run
 ```
 
-Running a Phoenix application
+Running test cases for an application:
+```sh
+mix test
+```
+
+Running a Phoenix application:
 ```sh
 mix phx.server
 ```
 
-Connect to a running application
+Running an application inside the `iex` REPL:
 ```sh
 iex -S mix
 ```
+(enables access to app specific modules and functions from the REPL)
 
 Running in production is a different story...
 
